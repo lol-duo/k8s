@@ -24,9 +24,11 @@ spec:
             - containerPort: {{ .Values.service.targetPort }}
           env:
             - name: Slack_Channel
-              value : riot-api-server
+              value: riot-api-server
             - name: PORT
               value: 80
+            - name: WAIT_TIME
+              value: 200
             - name: Slack_Bot_Token
               valueFrom:
                 secretKeyRef:
