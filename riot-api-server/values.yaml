@@ -1,7 +1,7 @@
 # values.yaml
 image:
   repository: 431955170593.dkr.ecr.ap-northeast-2.amazonaws.com/lol-duo
-  tag: latest
+  tag: aa6d69a65ac7852e567ab18664fb13289f49065f
   pullPolicy: Always
 
 deployment:
