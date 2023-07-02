@@ -17,7 +17,7 @@ spec:
         server: {{ .Values.deployment.name }}
     spec:
       containers:
-        - name: lolDuo-api-container
+        - name: riot-api-server-container
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
