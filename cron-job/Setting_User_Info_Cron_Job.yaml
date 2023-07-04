@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: setting-user-info-cron-workflow
+  namespace: lol-duo
+spec:
+  schedule: "00 00 * * 1" # 00:00 UTC every Monday
+  concurrencyPolicy: "Replace"
+  workflowSpec:
+    entrypoint: main
+    templates:
+      - name: main
+        dag:
+          tasks:
+            - name: setting-user-info
+              template: cron-job-template
+      - name: cron-job-template
+        container:
+          image: 431955170593.dkr.ecr.ap-northeast-2.amazonaws.com/lol-duo:CronJob
+          imagePullPolicy: "Always"
+          command: [npm, run, prodSettingUserInfo]
+          env:
+            - name: SQS_NAME
+              value: Riot_API_SQS.fifo
+            - name: Slack_Channel
+              value: cron-job
+            - name: Slack_Bot_Token
+              valueFrom:
+                secretKeyRef:
+                  name: lol-duo-api-secret
+                  key: Slack_Bot_Token
+            - name: CONST_AWS_SQS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: lol-duo-api-secret
+                  key: CONST_AWS_SQS_ACCESS_KEY_ID
+            - name: CONST_AWS_SQS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: lol-duo-api-secret
+                  key: CONST_AWS_SQS_SECRET_ACCESS_KEY
