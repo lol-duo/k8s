@@ -14,16 +14,29 @@ spec:
           tasks:
             - name: setting-user-info
               template: cron-job-template
+              arguments:
+                parameters: [{name: command, value: prodSettingUserInfo}]
+            - name: call-riot-api
+              dependencies: [setting-user-info]
+              template: cron-job-template
+              arguments:
+                parameters: [{name: command, value: prodSettingUserInfo_CallApi}]
+              withItems: [1,2,3,4,5]
       - name: cron-job-template
+        inputs:
+          parameters:
+            - name: command
         container:
           image: 431955170593.dkr.ecr.ap-northeast-2.amazonaws.com/lol-duo:CronJob
           imagePullPolicy: "Always"
-          command: [npm, run, prodSettingUserInfo]
+          command: [npm, run, "{{inputs.parameters.command}}"]
           env:
             - name: SQS_NAME
               value: Riot_API_SQS.fifo
             - name: Slack_Channel
               value: cron-job
+            - name: RIOT_SERVICE_URL
+              value: http://prod-riot-api-service
             - name: Slack_Bot_Token
               valueFrom:
                 secretKeyRef:
@@ -39,3 +52,8 @@ spec:
                 secretKeyRef:
                   name: lol-duo-api-secret
                   key: CONST_AWS_SQS_SECRET_ACCESS_KEY
+            - name: mongoDB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: lol-duo-api-secret
+                  key: mongoDB-URI
