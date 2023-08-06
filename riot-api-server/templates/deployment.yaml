@@ -17,25 +17,8 @@ spec:
         server: {{ .Values.deployment.name }}
     spec:
       containers:
-        - name: riot-api-server-container
+        - name: lol-duo-front
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.targetPort }}
-          env:
-            - name: Slack_Channel
-              value: riot-api-server
-            - name: PORT
-              value: "80"
-            - name: WAIT_COUNT_PER_SECOND
-              value: "5"
-            - name: Slack_Bot_Token
-              valueFrom:
-                secretKeyRef:
-                  name: lol-duo-api-secret
-                  key: Slack_Bot_Token
-            - name: Riot_API_Key
-              valueFrom:
-                secretKeyRef:
-                  name: lol-duo-api-secret
-                  key: Riot_API_Key

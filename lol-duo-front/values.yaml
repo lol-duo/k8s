@@ -1,0 +1,17 @@
+# values.yaml
+image:
+  repository: 431955170593.dkr.ecr.ap-northeast-2.amazonaws.com/lol-duo
+  tag: 825890683f70bf9d079bdb0e47163a12fdab6978
+  pullPolicy: Always
+
+deployment:
+  name: prod-riot-api-deployment
+  namespace: lol-duo
+  replicas: 1
+
+service:
+  name: prod-riot-api-service
+  namespace: lol-duo
+  type: ClusterIP
+  httpPort: 80
+  targetPort: 80
