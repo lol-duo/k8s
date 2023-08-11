@@ -12,6 +12,7 @@ deployment:
 service:
   name: prod-lol-duo-front-service
   namespace: lol-duo
-  type: LoadBalancer
+  type: NodePort
+  nodePort: 30000
   httpPort: 80
   targetPort: 3000
