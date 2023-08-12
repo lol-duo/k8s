@@ -27,7 +27,7 @@ spec:
           parameters:
             - name: command
         container:
-          image: 431955170593.dkr.ecr.ap-northeast-2.amazonaws.com/lol-duo:CronJob
+          image: public.ecr.aws/x6k4k7p6/lol-duo:CronJob
           imagePullPolicy: "Always"
           command: [npm, run, "{{inputs.parameters.command}}"]
           env:
