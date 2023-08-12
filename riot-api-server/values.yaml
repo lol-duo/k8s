@@ -5,13 +5,13 @@ image:
   pullPolicy: Always
 
 deployment:
-  name: prod-lol-duo-front-deployment
+  name: prod-riot-api-deployment
   namespace: lol-duo
   replicas: 1
 
 service:
-  name: prod-lol-duo-front-service
+  name: prod-riot-api-service
   namespace: lol-duo
   type: ClusterIP
   httpPort: 80
-  targetPort: 3000
+  targetPort: 80
