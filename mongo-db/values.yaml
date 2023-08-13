@@ -1,0 +1,9 @@
+image:
+  repository: mongo
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  name: prod-mongodb-service
+  type: ClusterIP
+  port: 27017

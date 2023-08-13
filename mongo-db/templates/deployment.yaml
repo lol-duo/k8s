@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-mongodb-deployment
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      db: {{ .Release.Name }}-mongodb
+  template:
+    metadata:
+      labels:
+        db: {{ .Release.Name }}-mongodb
+    spec:
+      containers:
+          - name: mongodb
+            image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+            imagePullPolicy: {{ .Values.image.pullPolicy }}
+            ports:
+              - containerPort: 27017
+            volumeMounts:
+              - name: mongodb-data
+                mountPath: "/data/db"
+      volumes:
+        - name: mongodb-data
+          persistentVolumeClaim:
+              claimName: efs-pvc
+      restartPolicy: Always

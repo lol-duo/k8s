@@ -1,0 +1,36 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  namespace: lol-duo
+  name: efs-provisioner
+spec:
+  selector:
+    matchLabels:
+      app: efs-provisioner
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: efs-provisioner
+    spec:
+      serviceAccount: efs-provisioner
+      containers:
+        - name: efs-provisioner
+          image: quay.io/external_storage/efs-provisioner:v2.4.0
+          env:
+            - name: FILE_SYSTEM_ID
+              value: "fs-07a7fab5e8a331a2b"
+            - name: AWS_REGION
+              value: "ap-northeast-2"
+            - name: PROVISIONER_NAME
+              value: "lol-duo-efs"
+          volumeMounts:
+            - name: pvcs
+              mountPath: /pvcs
+      volumes:
+        - name: pvcs
+          nfs:
+            server: "fs-07a7fab5e8a331a2b.efs.ap-northeast-2.amazonaws.com"
+            path: /
