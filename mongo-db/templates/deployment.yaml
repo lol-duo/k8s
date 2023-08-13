@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-mongodb-deployment
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.Namespace }}
 spec:
   replicas: 1
   selector:
@@ -25,5 +25,5 @@ spec:
       volumes:
         - name: mongodb-data
           persistentVolumeClaim:
-              claimName: efs-pvc
+              claimName: efs-claim
       restartPolicy: Always

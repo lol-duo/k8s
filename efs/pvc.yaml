@@ -1,12 +1,11 @@
-kind: PersistentVolumeClaim
 apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
-  name: efs-pvc
-  annotations:
-    volume.beta.kubernetes.io/storage-class: "efs-provisioner"
+  name: efs-claim
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  storageClassName: ""
   resources:
     requests:
-      storage: 10Gi
+      storage: 5Gi

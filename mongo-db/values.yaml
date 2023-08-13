@@ -1,3 +1,5 @@
+Namespace: lol-duo
+
 image:
   repository: mongo
   tag: latest
@@ -7,3 +9,5 @@ service:
   name: prod-mongodb-service
   type: ClusterIP
   port: 27017
+
+
