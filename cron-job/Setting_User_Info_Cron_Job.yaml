@@ -22,6 +22,17 @@ spec:
               arguments:
                 parameters: [{name: command, value: prodSettingUserInfo_CallApi}]
               withItems: [1,2,3,4,5]
+            - name: setting-user-puuid-info
+              dependencies: [call-riot-api]
+              template: cron-job-template
+              arguments:
+                  parameters: [{name: command, value: prodSetPuuId_SQS_INPUT}]
+            - name: call-riot-api-get-puuid
+              dependencies: [setting-user-puuid-info]
+              template: cron-job-template
+              arguments:
+                  parameters: [{name: command, value: prodSetPuuId_CallApi}]
+              withParam: [1,2,3,4,5]
       - name: cron-job-template
         inputs:
           parameters:
@@ -33,6 +44,8 @@ spec:
           env:
             - name: SQS_NAME
               value: Riot_API_SQS.fifo
+            - name: PUUID_SQS_NAME
+              value: puuidSQS.fifo
             - name: Slack_Channel
               value: cron-job
             - name: RIOT_SERVICE_URL
@@ -53,7 +66,4 @@ spec:
                   name: lol-duo-api-secret
                   key: CONST_AWS_SQS_SECRET_ACCESS_KEY
             - name: mongoDB_URI
-              valueFrom:
-                secretKeyRef:
-                  name: lol-duo-api-secret
-                  key: mongoDB-URI
+              value: mongodb://prod-mongodb-service:27017

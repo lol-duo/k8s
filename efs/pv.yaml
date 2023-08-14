@@ -2,6 +2,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: efs-pv
+  namespace: lol-duo
 spec:
   capacity:
     storage: 5Gi
@@ -10,6 +11,9 @@ spec:
     - ReadWriteOnce
   storageClassName: ""
   persistentVolumeReclaimPolicy: Retain
-  csi:
-    driver: efs.csi.aws.com
-    volumeHandle: fs-09cc9de5218fac859
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+  nfs:
+    path: /
+    server: fs-09cc9de5218fac859.efs.ap-northeast-2.amazonaws.com
