@@ -1,10 +1,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: CronWorkflow
 metadata:
-  name: setting-user-info-cron-workflow
+  name: setting-match-info-cron-workflow
   namespace: lol-duo
 spec:
-  schedule: "00 00 * * 1" # 00:00 UTC every Monday
+  schedule: "00 00 * * *" # 00:00 UTC every Monday
   concurrencyPolicy: "Replace"
   workflowSpec:
     entrypoint: main
@@ -12,15 +12,15 @@ spec:
       - name: main
         dag:
           tasks:
-            - name: setting-user-info
+            - name: setting-match-info
               template: cron-job-template
               arguments:
-                parameters: [{name: command, value: prodSettingUserInfo}]
+                parameters: [{name: command, value: prodSetMatchId_SQS_INPUT}]
             - name: call-riot-api
-              dependencies: [setting-user-info]
+              dependencies: [setting-match-info]
               template: cron-job-template
               arguments:
-                parameters: [{name: command, value: prodSettingUserInfo_CallApi}]
+                parameters: [{name: command, value: prodSetMatchId_CallApi}]
               withItems: [1,2,3,4,5]
       - name: cron-job-template
         inputs:
@@ -31,10 +31,10 @@ spec:
           imagePullPolicy: "Always"
           command: [npm, run, "{{inputs.parameters.command}}"]
           env:
-            - name: SQS_NAME
+            - name: MATCH_SQS_NAME
               value: Riot_API_SQS.fifo
-            - name: PUUID_SQS_NAME
-              value: puuidSQS.fifo
+            - name: MATCH_COUNT
+              value: "1000"
             - name: Slack_Channel
               value: cron-job
             - name: RIOT_SERVICE_URL

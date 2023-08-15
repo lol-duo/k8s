@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: CronWorkflow
 metadata:
-  name: setting-user-info-cron-workflow
+  name: setting-puuid-info-cron-workflow
   namespace: lol-duo
 spec:
   schedule: "00 00 * * 1" # 00:00 UTC every Monday
@@ -12,15 +12,15 @@ spec:
       - name: main
         dag:
           tasks:
-            - name: setting-user-info
+            - name: setting-user-puuid-info
               template: cron-job-template
               arguments:
-                parameters: [{name: command, value: prodSettingUserInfo}]
-            - name: call-riot-api
-              dependencies: [setting-user-info]
+                  parameters: [{name: command, value: prodSetPuuId_SQS_INPUT}]
+            - name: call-riot-api-get-puuid
+              dependencies: [setting-user-puuid-info]
               template: cron-job-template
               arguments:
-                parameters: [{name: command, value: prodSettingUserInfo_CallApi}]
+                  parameters: [{name: command, value: prodSetPuuId_CallApi}]
               withItems: [1,2,3,4,5]
       - name: cron-job-template
         inputs:
