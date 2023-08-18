@@ -21,7 +21,7 @@ spec:
               template: cron-job-template
               arguments:
                 parameters: [{name: command, value: prodSetMatchId_CallApi}]
-              withItems: [1,2,3,4,5]
+              withItems: [1,2,3]
       - name: cron-job-template
         inputs:
           parameters:
@@ -32,7 +32,7 @@ spec:
           command: [npm, run, "{{inputs.parameters.command}}"]
           env:
             - name: MATCH_SQS_NAME
-              value: Riot_API_SQS.fifo
+              value: matchSQS.fifo
             - name: MATCH_COUNT
               value: "1000"
             - name: Slack_Channel

@@ -13,6 +13,6 @@ service:
   name: prod-lol-duo-front-service
   namespace: lol-duo
   type: NodePort
-  nodePort: 30000
+  nodePort: 30001
   httpPort: 80
   targetPort: 3000
