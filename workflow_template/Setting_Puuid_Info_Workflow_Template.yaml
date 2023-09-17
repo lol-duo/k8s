@@ -1,10 +1,9 @@
 apiVersion: argoproj.io/v1alpha1
-kind: CronWorkflow
+kind: WorkflowTemplate
 metadata:
   name: setting-puuid-info-cron-workflow
   namespace: lol-duo
 spec:
-  schedule: "00 00 * * 1" # 00:00 UTC every Monday
   concurrencyPolicy: "Replace"
   workflowSpec:
     entrypoint: main

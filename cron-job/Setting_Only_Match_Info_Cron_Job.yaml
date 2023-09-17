@@ -1,27 +1,26 @@
 apiVersion: argoproj.io/v1alpha1
 kind: CronWorkflow
 metadata:
-  name: setting-user-info-cron-workflow
+  name: setting-only-match-info-cron-workflow
   namespace: lol-duo
 spec:
-  schedule: "00 00 * * 1" # 00:00 UTC every Monday
+  schedule: "00 00 1 1 1" # 00:00 UTC every Monday
   concurrencyPolicy: "Replace"
   workflowSpec:
+    arguments:
+      parameters:
+        - name: MATCH_COUNT
+          value: "1000"
     entrypoint: main
     templates:
       - name: main
         dag:
           tasks:
-            - name: setting-user-info
-              template: cron-job-template
-              arguments:
-                parameters: [{name: command, value: prodSettingUserInfo}]
             - name: call-riot-api
-              dependencies: [setting-user-info]
               template: cron-job-template
               arguments:
-                parameters: [{name: command, value: prodSettingUserInfo_CallApi}]
-              withItems: [1,2,3]
+                parameters: [{name: command, value: prodSetMatchId_CallApi}]
+              withItems: [1,2]
       - name: cron-job-template
         inputs:
           parameters:
@@ -31,10 +30,10 @@ spec:
           imagePullPolicy: "Always"
           command: [npm, run, "{{inputs.parameters.command}}"]
           env:
-            - name: SQS_NAME
-              value: Riot_API_SQS.fifo
-            - name: PUUID_SQS_NAME
-              value: puuidSQS.fifo
+            - name: MATCH_SQS_NAME
+              value: matchSQS.fifo
+            - name: MATCH_COUNT
+              value: "{{workflow.parameters.MATCH_COUNT}}"
             - name: Slack_Channel
               value: cron-job
             - name: RIOT_SERVICE_URL
@@ -55,4 +54,4 @@ spec:
                   name: lol-duo-api-secret
                   key: CONST_AWS_SQS_SECRET_ACCESS_KEY
             - name: mongoDB_URI
-              value: mongodb://prod-mongodb-service:27017
+              value: mongodb://10.0.0.57:27017
