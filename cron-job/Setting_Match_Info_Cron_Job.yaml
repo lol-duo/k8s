@@ -9,8 +9,8 @@ spec:
   workflowSpec:
     arguments:
       parameters:
-        - name: MATCH_COUNT
-          value: "1000"
+        - name: TIER
+          value: "DIAMOND"
     entrypoint: main
     templates:
       - name: main
@@ -37,8 +37,8 @@ spec:
           env:
             - name: MATCH_SQS_NAME
               value: matchSQS.fifo
-            - name: MATCH_COUNT
-              value: "{{workflow.parameters.MATCH_COUNT}}"
+            - name: TIER
+              value: "{{workflow.parameters.TIER}}"
             - name: Slack_Channel
               value: cron-job
             - name: RIOT_SERVICE_URL

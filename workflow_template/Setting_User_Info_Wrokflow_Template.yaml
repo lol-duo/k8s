@@ -4,59 +4,62 @@ metadata:
   name: setting-user-info-cron-workflow
   namespace: lol-duo
 spec:
-  concurrencyPolicy: "Replace"
-  workflowSpec:
+  arguments:
     parameters:
       - name: TIER
         value: "DIAMOND"
       - name: DIVISION
         value: "IV"
-    entrypoint: main
-    templates:
-      - name: main
-        dag:
-          tasks:
-            - name: setting-user-info
-              template: cron-job-template
-              arguments:
-                parameters: [{name: command, value: prodSettingUserInfo}]
-            - name: call-riot-api
-              dependencies: [setting-user-info]
-              template: cron-job-template
-              arguments:
-                parameters: [{name: command, value: prodSettingUserInfo_CallApi}]
-              withItems: [1,2,3]
-      - name: cron-job-template
-        inputs:
-          parameters:
-            - name: command
-        container:
-          image: public.ecr.aws/x6k4k7p6/lol-duo:CronJob
-          imagePullPolicy: "Always"
-          command: [npm, run, "{{inputs.parameters.command}}"]
-          env:
-            - name: SQS_NAME
-              value: Riot_API_SQS.fifo
-            - name: PUUID_SQS_NAME
-              value: puuidSQS.fifo
-            - name: Slack_Channel
-              value: cron-job
-            - name: RIOT_SERVICE_URL
-              value: http://prod-riot-api-service
-            - name: Slack_Bot_Token
-              valueFrom:
-                secretKeyRef:
-                  name: lol-duo-api-secret
-                  key: Slack_Bot_Token
-            - name: CONST_AWS_SQS_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: lol-duo-api-secret
-                  key: CONST_AWS_SQS_ACCESS_KEY_ID
-            - name: CONST_AWS_SQS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: lol-duo-api-secret
-                  key: CONST_AWS_SQS_SECRET_ACCESS_KEY
-            - name: mongoDB_URI
-              value: mongodb://prod-mongodb-service:27017
+  entrypoint: main
+  templates:
+    - name: main
+      dag:
+        tasks:
+          - name: setting-user-info
+            template: cron-job-template
+            arguments:
+              parameters: [{name: command, value: prodSettingUserInfo}]
+          - name: call-riot-api
+            dependencies: [setting-user-info]
+            template: cron-job-template
+            arguments:
+              parameters: [{name: command, value: prodSettingUserInfo_CallApi}]
+            withItems: [1,2,3]
+    - name: cron-job-template
+      inputs:
+        parameters:
+          - name: command
+      container:
+        image: public.ecr.aws/x6k4k7p6/lol-duo:CronJob
+        imagePullPolicy: "Always"
+        command: [npm, run, "{{inputs.parameters.command}}"]
+        env:
+          - name: SQS_NAME
+            value: Riot_API_SQS.fifo
+          - name: PUUID_SQS_NAME
+            value: puuidSQS.fifo
+          - name: Slack_Channel
+            value: cron-job
+          - name: RIOT_SERVICE_URL
+            value: http://prod-riot-api-service
+          - name: Slack_Bot_Token
+            valueFrom:
+              secretKeyRef:
+                name: lol-duo-api-secret
+                key: Slack_Bot_Token
+          - name: CONST_AWS_SQS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: lol-duo-api-secret
+                key: CONST_AWS_SQS_ACCESS_KEY_ID
+          - name: CONST_AWS_SQS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: lol-duo-api-secret
+                key: CONST_AWS_SQS_SECRET_ACCESS_KEY
+          - name: mongoDB_URI
+            value: mongodb://10.0.0.57:27017
+          - name: TIER
+            value: "{{workflow.parameters.TIER}}"
+          - name: DIVISION
+            value: "{{workflow.parameters.DIVISION}}"
