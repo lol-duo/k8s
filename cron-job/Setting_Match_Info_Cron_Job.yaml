@@ -4,28 +4,41 @@ metadata:
   name: setting-match-info-cron-workflow
   namespace: lol-duo
 spec:
-  schedule: "00 00 1 1 1" # 00:00 UTC every Monday
+  schedule: "00 00 * * *"
   concurrencyPolicy: "Replace"
   workflowSpec:
     arguments:
       parameters:
         - name: TIER
           value: "DIAMOND"
+        - name: TIME
+          value: "20"
     entrypoint: main
     templates:
       - name: main
         dag:
           tasks:
-            - name: setting-match-info
+            - name: setting-match-list
               template: cron-job-template
               arguments:
                 parameters: [{name: command, value: prodSetMatchId_SQS_INPUT}]
             - name: call-riot-api
-              dependencies: [setting-match-info]
+              dependencies: [setting-match-list]
               template: cron-job-template
               arguments:
                 parameters: [{name: command, value: prodSetMatchId_CallApi}]
-              withItems: [1,2,3]
+              withItems: [1,2,3,4,5,6,7,8,9,10]
+            - name: setting-match-info
+              dependencies: [call-riot-api]
+              template: cron-job-template
+              arguments:
+                parameters: [{name: command, value: prodSetMatchInfo_SQS_INPUT}]
+            - name: call-riot-api-get-match-info
+              dependencies: [setting-match-info]
+              template: cron-job-template
+              arguments:
+                  parameters: [{name: command, value: prodSetMatchInfo_CallApi}]
+              withItems: [1,2]
       - name: cron-job-template
         inputs:
           parameters:
