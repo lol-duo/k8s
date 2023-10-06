@@ -1,29 +1,27 @@
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: setting-user-info-cron-workflow
+  name: setting-match-info-workflow
   namespace: lol-duo
 spec:
   arguments:
     parameters:
-      - name: TIER
-        value: "DIAMOND"
-      - name: DIVISION
-        value: "IV"
+      - name: TIME
+        value: "10"
   entrypoint: main
   templates:
     - name: main
       dag:
         tasks:
-          - name: setting-user-info
+          - name: setting-match-info
             template: cron-job-template
             arguments:
-              parameters: [{name: command, value: prodSettingUserInfo}]
+              parameters: [{name: command, value: prodSetMatchInfo_SQS_INPUT}]
           - name: call-riot-api
-            dependencies: [setting-user-info]
+            dependencies: [setting-match-info]
             template: cron-job-template
             arguments:
-              parameters: [{name: command, value: prodSettingUserInfo_CallApi}]
+              parameters: [{name: command, value: prodSetMatchInfo_CallApi}]
             withItems: [1,2,3]
     - name: cron-job-template
       inputs:
@@ -36,8 +34,8 @@ spec:
         env:
           - name: SQS_NAME
             value: Riot_API_SQS.fifo
-          - name: PUUID_SQS_NAME
-            value: puuidSQS.fifo
+          - name: MATCHINFO_SQS_NAME
+            value: MatchInfoSQS.fifo
           - name: Slack_Channel
             value: cron-job
           - name: RIOT_SERVICE_URL
@@ -59,7 +57,5 @@ spec:
                 key: CONST_AWS_SQS_SECRET_ACCESS_KEY
           - name: mongoDB_URI
             value: mongodb://10.0.0.57:27017/?directConnection=true&serverSelectionTimeoutMS=2000
-          - name: TIER
-            value: "{{workflow.parameters.TIER}}"
-          - name: DIVISION
-            value: "{{workflow.parameters.DIVISION}}"
+          - name: TIME
+            value: "{{workflow.parameters.TIME}}"

@@ -50,8 +50,12 @@ spec:
           env:
             - name: MATCH_SQS_NAME
               value: matchSQS.fifo
+            - name: MATCHINFO_SQS_NAME
+              value: MatchInfoSQS.fifo
             - name: TIER
               value: "{{workflow.parameters.TIER}}"
+            - name: TIME
+              value: "{{workflow.parameters.TIME}}"
             - name: Slack_Channel
               value: cron-job
             - name: RIOT_SERVICE_URL
@@ -72,4 +76,4 @@ spec:
                   name: lol-duo-api-secret
                   key: CONST_AWS_SQS_SECRET_ACCESS_KEY
             - name: mongoDB_URI
-              value: mongodb://10.0.0.57:27017
+              value: mongodb://10.0.0.57:27017/?directConnection=true&serverSelectionTimeoutMS=2000
