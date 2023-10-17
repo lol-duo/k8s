@@ -1,0 +1,27 @@
+# templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.deployment.namespace }}
+  labels:
+    deployment: {{ .Values.deployment.name }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      server: {{ .Values.deployment.name }}
+  template:
+    metadata:
+      labels:
+        server: {{ .Values.deployment.name }}
+    spec:
+      containers:
+        - name: backend-server-container
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+          env:
+            - name: mongoDB_URI
+              value: mongodb://10.0.0.57:27017/?directConnection=true&serverSelectionTimeoutMS=2000
