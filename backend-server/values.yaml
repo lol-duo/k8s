@@ -12,6 +12,7 @@ deployment:
 service:
   name: prod-backend-server-service
   namespace: lol-duo
-  type: ClusterIP
+  type: NodePort
+  nodePort: 30002
   httpPort: 80
   targetPort: 3000
