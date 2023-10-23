@@ -1,7 +1,7 @@
 # values.yaml
 image:
   repository: public.ecr.aws/x6k4k7p6/lol-duo
-  tag: front-b0151d7f07313bcc5b5cb6cb190070e252301c6a
+  tag: front-bf0285b7c1d6e5c5aa7a20908b7bbc8d932c1bfe
   pullPolicy: Always
 
 deployment:
